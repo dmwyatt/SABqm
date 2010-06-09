@@ -23,8 +23,6 @@ def get_queue(url, port, apikey):
             'output': 'json'}
 
     data = urllib.urlencode(values)
-    print url
-    print data
 
     req = urllib2.Request(url, data)
 
