@@ -83,7 +83,7 @@ def get_nzb(directory, usenet_age_sort = False):
 
     return sorted(nzbs, key=nzbs.get)[-1]
 
-
+#--------------CONFIGURE THESE ITEMS--------------------
 sab_tv_nzb_blackhole = r"SABs BLACKHOLE DIR HERE"
 sb_blackhole = r"SICKBEARDS BLACKHOLE DIR HERE"
 url = r"URL FOR SABnzbd+ HERE (e.g. http://server/)"
@@ -95,12 +95,13 @@ sleep_seconds = 10
 
 #maximum length you want your SABnzbd+ queue to be
 q_length = 2
+#--------------STOP CONFIGURING-------------------------
 
 while 1:
     if queue_ready(url, port, apikey, q_length):
         nzb = get_nzb(sb_blackhole, usenet_age_sort = False)
         if nzb:
-            print "Moving %s" % os.path.basename(nzb)
+            print "%(s) Moving %s" % os.path.basename(nzb)
             shutil.move(nzb, sab_tv_nzb_blackhole)
 
 
