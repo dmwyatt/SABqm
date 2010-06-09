@@ -1,0 +1,12 @@
+To keep the SABnzbd+ queue size smallish this script monitors a temporary holding directory (the sickbeard NZB blackhole) for NZB files.  When it finds such files it checks to be sure that the SABnzbd+ queue is smaller than a configured amount, and if so, moves the oldest NZB file into the SABnzbd+ blackhole.  
+
+Open sabqm.py in a text editor and change the items below the line that looks like this:
+
+#--------------CONFIGURE THESE ITEMS--------------------
+
+Stop doing stuff when you get to the line that looks like this:
+
+#--------------STOP CONFIGURING-------------------------
+
+
+
