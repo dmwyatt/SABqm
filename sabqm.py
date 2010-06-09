@@ -99,7 +99,7 @@ while 1:
     if queue_ready(url, port, apikey, q_length):
         nzb = get_nzb(sb_blackhole, usenet_age_sort = False)
         if nzb:
-            print "%(s) Moving %s" % os.path.basename(nzb)
+            print "(%s) Moving %s" % (datetime.today(), os.path.basename(nzb))
             shutil.move(nzb, sab_tv_nzb_blackhole)
 
 
