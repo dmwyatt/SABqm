@@ -38,12 +38,24 @@ def queue_ready(url, port, apikey, q_len):
     """ Returns True if queue (data structure returned by get_queue) is short
         enough (specified by q_len) to accept another NZB.
     """
-    curr_q_len = len(get_queue(url, port, apikey)['queue']['slots'])
+    count = 0
+    while 1:
+        try:
+            curr_q_len = len(get_queue(url, port, apikey)['queue']['slots'])
+            break
+        except:
+            #If SABnzbd+ is unresponsive, wait 5 seconds and try again
+            screen_log("SABnzbd+ unresponsive, waiting 5 seconds (%i retries)" % count)
+            count += 1
+            time.sleep(5)
 
     if curr_q_len < q_len:
         return True
     else:
         return False
+
+def screen_log(msg):
+    print "(%s) %s" % (datetime.today(), msg)
 
 def get_nzb(directory, usenet_age_sort = False):
     """ Returns path to an NZB from directory.
@@ -99,8 +111,20 @@ while 1:
     if queue_ready(url, port, apikey, q_length):
         nzb = get_nzb(sb_blackhole, usenet_age_sort = False)
         if nzb:
-            print "(%s) Moving %s" % (datetime.today(), os.path.basename(nzb))
-            shutil.move(nzb, sab_tv_nzb_blackhole)
+            screen_log("Moving %s" % os.path.basename(nzb))
+
+            #Try to move file 5 times before giving up
+            for i in range(5):
+                try:
+                    shutil.move(nzb, sab_tv_nzb_blackhole)
+                    success = True
+                    break
+                except:
+                    success = False
+                    time.sleep(10)
+
+            if not success:
+                screen_log("Failed to move %s" % os.path.basename(nzb))
 
 
     time.sleep(sleep_seconds)
