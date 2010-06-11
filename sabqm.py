@@ -117,6 +117,9 @@ while 1:
             for i in range(5):
                 try:
                     shutil.move(nzb, sab_tv_nzb_blackhole)
+
+                    #quick fix for delay between nzb move and SABnzbd+ picking it up
+                    time.sleep(10)
                     success = True
                     break
                 except:
@@ -125,6 +128,7 @@ while 1:
 
             if not success:
                 screen_log("Failed to move %s" % os.path.basename(nzb))
+
 
 
     time.sleep(sleep_seconds)
