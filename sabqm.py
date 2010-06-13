@@ -29,7 +29,7 @@ def get_queue(url, port, apikey):
             'mode': 'queue',
             'output': 'json'}
     try:
-        queue = jston.loads(sab_api(url, port, values, apikey))
+        queue = json.loads(sab_api(url, port, values, apikey))
     except ValueError:
         screen_log("Invalid api response from SABnzbd+")
         raise
