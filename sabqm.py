@@ -122,7 +122,7 @@ sleep_seconds = 10
 q_length = 2
 #--------------STOP CONFIGURING-------------------------
 
-sab_add_by_path(url, port, apikey, p, 'tv')
+
 while 1:
     if queue_ready(url, port, apikey, q_length):
         nzb = get_nzb(sb_blackhole, usenet_age_sort = False)
