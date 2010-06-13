@@ -7,30 +7,32 @@ import time
 import urllib
 import urllib2
 
+def sab_api(url, port, values, apikey):
+    url = "%s:%i/sabnzbd/api" % (url, port)
+
+    values['apikey'] = apikey
+
+    data = urllib.urlencode(values)
+    req = urllib2.Request(url, data)
+    response = urllib2.urlopen(req)
+    the_response = response.read()
+
+    return the_response
 
 def get_queue(url, port, apikey):
     """ Fetches the SABnzbd+ queue.
         url: "http://server/"
         port: 8080
     """
-    if url[-1] == "/":
-        url = url[:-1]
 
-    url = "%s:%i/sabnzbd/api" % (url, port)
-
-    values={'apikey': apikey,
+    values={
             'mode': 'queue',
             'output': 'json'}
-
-    data = urllib.urlencode(values)
-
-    req = urllib2.Request(url, data)
-
-    response = urllib2.urlopen(req)
     try:
-        queue = json.load(response)
-    except:
-        import pdb; pdb.set_trace()
+        queue = jston.loads(sab_api(url, port, values, apikey))
+    except ValueError:
+        screen_log("Invalid api response from SABnzbd+")
+        raise
 
     return queue
 
@@ -86,15 +88,27 @@ def get_nzb(directory, usenet_age_sort = False):
             timestamp = int(re.search(r'date="(?P<timestamp>\d{10})"', contents).groups('timestamp')[0])
             nzbs[nzb] = datetime.today() - datetime.fromtimestamp(timestamp)
 
-
-
     else:
         for nzb in nzbs:
             nzbs[nzb] = os.path.getmtime(nzb)
 
     return sorted(nzbs, key=nzbs.get)[0]
 
+def sab_add_by_path(url, port, apikey, path, category):
+
+    values = {'mode': 'addlocalfile',
+              'name': path,
+              'cat': category}
+
+    response = sab_api(url, port, values, apikey)
+
+    if response.strip() != 'ok':
+        raise ValueError("Failed to add %s" % path)
+
+    return response.strip()
+
 #--------------CONFIGURE THESE ITEMS--------------------
+sab_category = 'tv'
 sab_tv_nzb_blackhole = r"SABs BLACKHOLE DIR HERE"
 sb_blackhole = r"SICKBEARDS BLACKHOLE DIR HERE"
 url = r"URL FOR SABnzbd+ HERE (e.g. http://server/)"
@@ -108,28 +122,16 @@ sleep_seconds = 10
 q_length = 2
 #--------------STOP CONFIGURING-------------------------
 
+sab_add_by_path(url, port, apikey, p, 'tv')
 while 1:
     if queue_ready(url, port, apikey, q_length):
         nzb = get_nzb(sb_blackhole, usenet_age_sort = False)
         if nzb:
-            screen_log("Moving %s" % os.path.basename(nzb))
-
-            #Try to move file 5 times before giving up
-            for i in range(5):
-                try:
-                    shutil.move(nzb, sab_tv_nzb_blackhole)
-
-                    #quick fix for delay between nzb move and SABnzbd+ picking it up
-                    time.sleep(10)
-                    success = True
-                    break
-                except:
-                    success = False
-                    time.sleep(10)
-
-            if not success:
-                screen_log("Failed to move %s" % os.path.basename(nzb))
-
-
+            screen_log("Adding %s" % os.path.basename(nzb))
+            try:
+                screen_log(sab_add_by_path(url, port, apikey, nzb, sab_category)
+            except:
+                screen_log("failed to add %s" % os.path.basename(nzb))
+                shutil.move(nzb, nzb + ".fail")
 
     time.sleep(sleep_seconds)
