@@ -135,6 +135,7 @@ while 1:
                 for i in range(60):
                     try:
                         os.remove(nzb)
+                        break
                     except:
                         time.sleep(1)
             except:
