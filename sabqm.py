@@ -80,6 +80,7 @@ def get_nzb(directory, usenet_age_sort = False):
         for nzb in nzbs:
             f = open(nzb, 'r')
             contents = f.read()
+            f.close()
             #Yes, I'm using a regex instead of properly parsing the XML.
             #I'm so awesome.
             timestamp = int(re.search(r'date="(?P<timestamp>\d{10})"', contents).groups('timestamp')[0])
@@ -91,7 +92,7 @@ def get_nzb(directory, usenet_age_sort = False):
         for nzb in nzbs:
             nzbs[nzb] = os.path.getmtime(nzb)
 
-    return sorted(nzbs, key=nzbs.get)[-1]
+    return sorted(nzbs, key=nzbs.get)[0]
 
 #--------------CONFIGURE THESE ITEMS--------------------
 sab_tv_nzb_blackhole = r"SABs BLACKHOLE DIR HERE"
