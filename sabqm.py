@@ -129,7 +129,7 @@ while 1:
         if nzb:
             screen_log("Adding %s" % os.path.basename(nzb))
             try:
-                screen_log(sab_add_by_path(url, port, apikey, nzb, sab_category)
+                screen_log(sab_add_by_path(url, port, apikey, nzb, sab_category))
             except:
                 screen_log("failed to add %s" % os.path.basename(nzb))
                 shutil.move(nzb, nzb + ".fail")
