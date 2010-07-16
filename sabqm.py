@@ -36,20 +36,29 @@ def get_queue(url, port, apikey):
 
     return queue
 
-def queue_ready(url, port, apikey, q_len):
-    """ Returns True if queue (data structure returned by get_queue) is short
-        enough (specified by q_len) to accept another NZB.
-    """
+def sab_available(url, port, apikey):
+    values={
+            'mode': 'version',
+            'output': 'json'}
+
     count = 0
     while 1:
         try:
-            curr_q_len = len(get_queue(url, port, apikey)['queue']['slots'])
-            break
+            return json.loads(sab_api(url, port, values, apikey))
         except:
             #If SABnzbd+ is unresponsive, wait 5 seconds and try again
             screen_log("SABnzbd+ unresponsive, waiting 5 seconds (%i retries)" % count)
             count += 1
             time.sleep(5)
+
+def queue_ready(url, port, apikey, q_len):
+    """ Returns True if queue (data structure returned by get_queue) is short
+        enough (specified by q_len) to accept another NZB.
+    """
+    count = 0
+
+    if sab_available(url, port, apikey):
+        curr_q_len = len(get_queue(url, port, apikey)['queue']['slots'])
 
     if curr_q_len < q_len:
         return True
