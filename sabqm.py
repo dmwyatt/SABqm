@@ -8,6 +8,8 @@ import urllib
 import urllib2
 
 def sab_api(url, port, values, apikey):
+    if url[-1] == "/":
+        url = url[:-1]
     url = "%s:%i/sabnzbd/api" % (url, port)
 
     values['apikey'] = apikey
