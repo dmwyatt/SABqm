@@ -118,9 +118,8 @@ def sab_add_by_path(url, port, apikey, path, category):
 
 #--------------CONFIGURE THESE ITEMS--------------------
 sab_category = 'tv'
-sab_tv_nzb_blackhole = r"SABs BLACKHOLE DIR HERE"
 sb_blackhole = r"SICKBEARDS BLACKHOLE DIR HERE"
-url = r"URL FOR SABnzbd+ HERE (e.g. http://server/)"
+url = r"URL FOR SABnzbd+ HERE (e.g. http://server)"
 port = 8080
 apikey = "SABnzbd+ APIKEY HERE"
 
